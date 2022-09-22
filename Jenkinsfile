@@ -61,15 +61,14 @@ pipeline {
                 }
             }
         }
-        stage('Start MiniKube'){
+        stage('Deploy to Minikube'){
             steps {
-                sh "minikube start"
+                sh 'envsubst < ${WORKSPACE}/deployment.yml | kubectl apply -f -'
             }
         }  
-        stage('Deploy new image to Minikube') {
+        stage('Start Minikube') {
             steps {
-                sh "kubectl create deployment petclinic-minikube --image=${IMAGE_NAME}:${IMAGE_TAG}"
-                sh "kubectl expose deployment petclinic-minikube --type=NodePort --port=8181"
+                sh "minikube start"
                 sh "kubectl get services petclinic-minikube"
             }
         }
